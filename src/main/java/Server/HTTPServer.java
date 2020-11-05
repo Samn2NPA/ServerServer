@@ -1,11 +1,12 @@
-import com.sun.net.httpserver.Headers;
+package Server;
+
+import Common.Config;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
 
 import java.io.*;
 import java.net.InetSocketAddress;
-import java.util.concurrent.Executor;
 
 import static com.sun.net.httpserver.HttpServer.create;
 
@@ -16,9 +17,10 @@ public class HTTPServer {
     private static final String TAG = HTTPServer.class.getSimpleName() + "|";
     private HttpServer httpServer;
 
+
     public HTTPServer() {
         try {
-            httpServer = create(new InetSocketAddress(8989), 0);
+            httpServer = create(new InetSocketAddress(Config.HTTP_PORT), 0);
 
             String strContext = "/login";
             httpServer.createContext(strContext, new HttpHandler() {
@@ -41,12 +43,12 @@ public class HTTPServer {
                     System.out.println(TAG + "createContext| GET REQUEST: " + strBuffer.toString());
 
 
-                    OutputStream responseBody = httpExchange.getResponseBody();
                     String strRes = "This is response";
                     byte[] strResBytes = strRes.getBytes();
-                    responseBody.write(strResBytes);
-
                     httpExchange.sendResponseHeaders(200, strResBytes.length);
+
+                    OutputStream responseBody = httpExchange.getResponseBody();
+                    responseBody.write(strResBytes);
                     responseBody.close();
 
                     System.out.println(TAG + "createContext| Sent Response");
