@@ -1,15 +1,19 @@
+import Common.Log;
 import Server.HTTPServer;
+import Server.SimpleTCPServer;
 
 /**
  * Created by Phanh on 11/5/20.
  */
 public class RunServer {
-
-    private static final String TAG = RunServer.class.getSimpleName() + " -------   ";
+    static Log log = new Log(RunServer.class.getSimpleName());
 
     public static void main(String[] args) {
         HTTPServer httpServer = new HTTPServer();
-        System.out.println(TAG + " HTTP server processing...");
+        log.info(" HTTP server processing...");
         httpServer.start();
+
+        SimpleTCPServer tcpServer = new SimpleTCPServer();
+        log.info(" SimpleTCPServer processing...");
     }
 }

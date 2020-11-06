@@ -1,48 +1,43 @@
 package Server;
 
 import Common.Config;
+import Common.Log;
+import Common.Utils;
 
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 
 public class SimpleTCPServer {
-    private static final String TAG = SimpleTCPServer.class.getSimpleName() + "|";
+    Log log = new Log(SimpleTCPServer.class.getSimpleName());
 
     public SimpleTCPServer() {
 
         try (ServerSocket serverSocket = new ServerSocket(Config.SOCKET_PORT)) {
-            while (true) {
+            log.info(" Started socket in port: " + Config.SOCKET_PORT);
 
-                try (Socket socket = serverSocket.accept()) {
+            try (Socket socket = serverSocket.accept()) {
+                log.info("socket is listening in port: " + Config.SOCKET_PORT);
 
+                log.info("processing stream");
 
-                    System.out.println(TAG + " Start socket in 6868");
+                InputStreamReader streamReader = new InputStreamReader(socket.getInputStream());
+                BufferedReader bufferedReader = new BufferedReader(streamReader);
 
-                    InputStream input = socket.getInputStream();
-                    BufferedReader reader = new BufferedReader(new InputStreamReader(input));
+                OutputStream output = socket.getOutputStream();
+                PrintWriter writer = new PrintWriter(output, true);
 
-                    OutputStream output = socket.getOutputStream();
-                    PrintWriter writer = new PrintWriter(output, true);
+                log.info("handle data input");
 
-
-                    String text;
-
-                    do {
-                        text = reader.readLine();
-                        String reverseText = new StringBuilder(text).reverse().toString();
-                        writer.println("Server: " + reverseText);
-
-                    } while (!text.equals("bye"));
-
-                    socket.close();
-
-                }
+                String text;
+                text = bufferedReader.readLine();
+                writer.println(" -- Server received: " + text);
+                socket.close();
             }
 
 
         } catch (IOException e) {
-            System.out.println(TAG + " Start socket in 6868 :: failed");
+            log.info(" Failed to Start socket in " + Config.SOCKET_PORT);
             e.printStackTrace();
         }
     }
